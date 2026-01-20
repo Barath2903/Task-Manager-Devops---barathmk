@@ -1,0 +1,107 @@
+services:
+  postgres-task:
+    image: postgres:15-alpine
+    container_name: postgres-task
+    environment:
+      POSTGRES_DB: taskdb
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+    ports:
+      - "5434:5432"
+    volumes:
+      - task-db-data:/var/lib/postgresql/data
+    networks:
+      - task-manager-network
+
+  postgres-user:
+    image: postgres:15-alpine
+    container_name: postgres-user
+    environment:
+      POSTGRES_DB: userdb
+      POSTGRES_USER: useruser
+      POSTGRES_PASSWORD: userpass
+    ports:
+      - "5433:5432"
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - task-manager-network
+
+  task-service:
+    build:
+      context: .
+      dockerfile: task-service/Dockerfile
+    container_name: task-service
+    environment:
+      DB_HOST: postgres-task
+      DB_PORT: 5432
+      DB_NAME: taskdb
+      DB_USER: taskuser
+      DB_PASSWORD: taskpass
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres-task
+    networks:
+      - task-manager-network
+
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    container_name: user-service
+    environment:
+      DB_HOST: postgres-user
+      DB_PORT: 5432
+      DB_NAME: userdb
+      DB_USER: useruser
+      DB_PASSWORD: userpass
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres-user
+    networks:
+      - task-manager-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    environment:
+      TASK_SERVICE_HOST: task-service
+      TASK_SERVICE_PORT: 8081
+      USER_SERVICE_HOST: user-service
+      USER_SERVICE_PORT: 8082
+    ports:
+      - "8080:8080"
+    depends_on:
+      - task-service
+      - user-service
+    networks:
+      - task-manager-network
+
+  sonarqube:
+    image: sonarqube:latest
+    container_name: sonarqube
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLED: "true"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube-data:/opt/sonarqube/data
+      - sonarqube-extensions:/opt/sonarqube/extensions
+      - sonarqube-logs:/opt/sonarqube/logs
+    networks:
+      - task-manager-network
+
+volumes:
+  task-db-data:
+  user-db-data:
+  sonarqube-data:
+  sonarqube-extensions:
+  sonarqube-logs:
+
+networks:
+  task-manager-network:
+    driver: bridge

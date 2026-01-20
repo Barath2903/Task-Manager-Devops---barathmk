@@ -1,0 +1,4 @@
+com/taskmanager/taskservice/integration/TaskIntegrationTest.class
+com/taskmanager/taskservice/integration/TaskServiceTestcontainersTest.class
+com/taskmanager/taskservice/TaskServiceApplicationTests.class
+com/taskmanager/taskservice/service/TaskServiceTest.class

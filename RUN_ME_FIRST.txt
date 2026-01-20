@@ -1,0 +1,94 @@
+================================================================================
+                    TASK MANAGER - QUICK START COMMANDS
+================================================================================
+
+STEP 1: VERIFY YOUR SETUP
+--------------------------
+Run this command to check if everything is installed:
+    ./verify-setup.sh
+
+If Docker daemon is not running, start Docker Desktop first!
+
+
+STEP 2: START ALL SERVICES
+---------------------------
+cd "/Users/barath/Task Manager Devops"
+docker-compose up -d
+
+Wait 30-60 seconds, then check status:
+    docker-compose ps
+
+
+STEP 3: TEST THE API
+---------------------
+# Health check
+curl http://localhost:8080/actuator/health
+
+# Create a user
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"username":"john","email":"john@example.com","name":"John Doe"}'
+
+# Create a task
+curl -X POST http://localhost:8080/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"title":"My Task","description":"Test task","userId":1,"status":"PENDING"}'
+
+# Get all tasks
+curl http://localhost:8080/api/tasks
+
+
+STEP 4: VIEW LOGS (Optional)
+------------------------------
+docker-compose logs -f
+
+
+STEP 5: STOP SERVICES (When Done)
+----------------------------------
+docker-compose down
+
+
+================================================================================
+                            SERVICE ENDPOINTS
+================================================================================
+
+API Gateway:     http://localhost:8080
+Task Service:    http://localhost:8081
+User Service:    http://localhost:8082
+
+All API calls should go through the Gateway (port 8080)
+
+
+================================================================================
+                            DOCUMENTATION
+================================================================================
+
+📖 START_HERE.md          - Quick start guide
+📖 STEP_BY_STEP_GUIDE.md  - Detailed step-by-step instructions
+📖 QUICKSTART.md          - Quick reference
+📖 README.md              - Full project documentation
+
+
+================================================================================
+                            TROUBLESHOOTING
+================================================================================
+
+Problem: Docker daemon not running
+Solution: Start Docker Desktop application
+
+Problem: Port already in use
+Solution: 
+    lsof -i :8080
+    kill -9 <PID>
+
+Problem: Services won't start
+Solution:
+    docker-compose logs
+    docker-compose down
+    docker-compose up -d
+
+Problem: Can't connect to API
+Solution: Wait 30-60 seconds for services to fully start
+
+
+================================================================================
