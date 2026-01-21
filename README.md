@@ -76,20 +76,22 @@ docker run -d --name postgres-user -e POSTGRES_DB=userdb -e POSTGRES_USER=userus
 
 3. Build the project:
 ```bash
-mvn clean install
+   mvn clean install
 ```
 
 4. Run services in separate terminals:
 ```bash
 # Terminal 1 - Task Service (uses host port 5434 for postgres-task)
-cd task-service && mvn spring-boot:run
+cd /Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk/task-service && mvn spring-boot:run
 
 # Terminal 2 - User Service (uses host port 5433 for postgres-user)
-cd user-service && mvn spring-boot:run
+cd /Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk/user-service && mvn spring-boot:run
 
 # Terminal 3 - API Gateway
-cd api-gateway && mvn spring-boot:run
+cd /Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk/api-gateway && mvn spring-boot:run
 ```
+
+> **Note**: Make sure you're in the correct directory. Run from `/Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk/`
 
 **Database Configuration:**
 When running services locally with `mvn spring-boot:run`, applications connect via host port mappings:
@@ -116,10 +118,12 @@ mvn verify
 mvn checkstyle:check
 
 # SonarQube (requires SonarQube server running)
-cd /Users/barath/Task\ Manager\ Devops
+cd /Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk
 mvn clean package -DskipTests
-mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_723575df583e804b91bff7979c92d09bba0a1914
+mvn sonar:sonar -Dsonar.host.url=http://localhost:9000 -Dsonar.token=squ_bc6654a4e82279ec2aede795434ee843e57b8f58
 ```
+
+> **Note**: Run Maven commands from the project root directory `/Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk/` where the parent `pom.xml` is located.
 
 **SonarQube Setup:**
 1. Access SonarQube at http://localhost:9000 (default admin/admin)
@@ -161,18 +165,26 @@ docker build -t api-gateway:latest -f api-gateway/Dockerfile .
 ### Tag and Push to Registry
 
 **Step 1: Login to Docker Registry**
-```bash
-# For Docker Hub
-docker login
 
-# For other registries (AWS ECR, Azure ACR, etc.)
-# docker login <registry-url>
+For Docker Hub:
+```bash
+docker login
+# Enter your Docker Hub username and password
 ```
 
-**Step 2: Set registry variable and push**
+**Step 2: Build images (if not already built)**
 ```bash
-# For Docker Hub (replace 'myusername' with your actual username)
-export DOCKER_REGISTRY=docker.io/myusername
+cd /Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk
+docker build -t task-service:latest -f task-service/Dockerfile .
+docker build -t user-service:latest -f user-service/Dockerfile .
+docker build -t api-gateway:latest -f api-gateway/Dockerfile .
+```
+
+**Step 3: Tag and Push to Registry**
+
+For Docker Hub (replace `barathmk` with your actual username if different):
+```bash
+export DOCKER_REGISTRY=docker.io/barathmk
 docker tag task-service:latest $DOCKER_REGISTRY/task-service:latest
 docker tag user-service:latest $DOCKER_REGISTRY/user-service:latest
 docker tag api-gateway:latest $DOCKER_REGISTRY/api-gateway:latest
@@ -181,6 +193,18 @@ docker push $DOCKER_REGISTRY/task-service:latest
 docker push $DOCKER_REGISTRY/user-service:latest
 docker push $DOCKER_REGISTRY/api-gateway:latest
 ```
+
+**Docker Hub Images (Available):**
+- https://hub.docker.com/r/barathmk/task-service
+- https://hub.docker.com/r/barathmk/user-service
+- https://hub.docker.com/r/barathmk/api-gateway
+
+
+**Troubleshooting:**
+- `push access denied` / `insufficient_scope` - You need to login first: `docker login` (and make sure credentials are valid)
+- `repository does not exist` - Create the repository in your registry first before pushing
+- `access denied` - Check your credentials: `docker logout` then `docker login` again
+- Not logged in? - Run `docker login` again and verify your credentials are correct
 
 ## Kubernetes Deployment
 
@@ -204,7 +228,7 @@ minikube addons enable registry-creds
 3. **Build images in Minikube's Docker**:
 ```bash
 eval $(minikube docker-env)
-cd /Users/barath/Task\ Manager\ Devops
+cd /Users/barath/Task\ Manager\ Devops/Task-Manager-Devops---barathmk/
 docker build -t task-service:latest -f task-service/Dockerfile .
 docker build -t user-service:latest -f user-service/Dockerfile .
 docker build -t api-gateway:latest -f api-gateway/Dockerfile .
