@@ -182,33 +182,6 @@ docker push $DOCKER_REGISTRY/user-service:latest
 docker push $DOCKER_REGISTRY/api-gateway:latest
 ```
 
-**For AWS ECR:**
-```bash
-# Get ECR login credentials
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789.dkr.ecr.us-east-1.amazonaws.com
-
-# Set registry and push
-export DOCKER_REGISTRY=123456789.dkr.ecr.us-east-1.amazonaws.com
-docker tag task-service:latest $DOCKER_REGISTRY/task-service:latest
-docker push $DOCKER_REGISTRY/task-service:latest
-```
-
-**For Azure Container Registry (ACR):**
-```bash
-# Login
-az acr login --name myregistry
-
-# Set registry and push
-export DOCKER_REGISTRY=myregistry.azurecr.io
-docker tag task-service:latest $DOCKER_REGISTRY/task-service:latest
-docker push $DOCKER_REGISTRY/task-service:latest
-```
-
-**Troubleshooting:**
-- `repository does not exist` - Create the repository in your registry first
-- `insufficient_scope` - You need to login: `docker login`
-- `access denied` - Check your credentials: `docker logout` then `docker login` again
-
 ## Kubernetes Deployment
 
 ### Prerequisites
