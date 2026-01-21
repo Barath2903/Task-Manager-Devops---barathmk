@@ -142,17 +142,4 @@ docker-compose logs postgres-task
 3. ✅ **Test API:** Use curl commands above
 4. 📖 **Read documentation:** Check other .md files
 5. 🧪 **Run tests:** `mvn test`
-6. 🚀 **Deploy to K8s:** See Kubernetes section in guides
-
----
-
-## 💡 Tips
-
-- **Use Postman/Insomnia** for easier API testing
-- **Check logs** if something doesn't work: `docker-compose logs -f`
-- **All services restart** when you change code (if using volume mounts)
-- **Database data persists** in Docker volumes
-
----
-
-**Need help?** Check `STEP_BY_STEP_GUIDE.md` for detailed instructions!
+6. 🚀 **Deploy to K8s:** See Kubernetes section
