@@ -1,4 +1,3 @@
-.PHONY: build test clean docker-build docker-push k8s-deploy k8s-delete help
 
 # Variables
 DOCKER_REGISTRY ?= localhost:5000
